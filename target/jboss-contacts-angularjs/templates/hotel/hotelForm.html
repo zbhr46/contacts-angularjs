@@ -1,0 +1,83 @@
+<!--
+    JBoss, Home of Professional Open Source
+    Copyright 2014, Red Hat, Inc. and/or its affiliates, and individual
+    contributors by the @authors tag. See the copyright.txt in the
+    distribution for a full listing of individual contributors.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<!-- This is an Angular.js template -->
+
+<!-- Status messages to be displayed -->
+<div rh-message-bag messages="messages"></div>
+
+<!-- This form is used to add new Hotel entries. Upon loading all fields are empty. -->
+<form name="hotelForm" role="form" id="hotelForm">
+
+    <!-- Form group for First Name input and associated error messages. -->
+    <!-- ng-class conditionally applies a class string (e.g 'has-error'), dependent upon a boolean expression. -->
+    <div class="form-group" ng-class="{'has-error': hotelForm.hotelName.$invalid}">
+        <label for="hotelName">Hotel name:</label>
+        <!-- ng-pattern validates the contents of an input against a provided regexp. -->
+        <input type="text" name="hotelName" class="form-control"  id="hotelName" placeholder="Enter a hotel name."
+               ng-model="hotel.hotelName" ng-pattern="/^[A-Za-z]+$/" required>
+        <!-- Appropriate error messages, to be displayed as required. -->
+        <!-- ng-show conditionally applies the style {display: none !important} if statement is false. -->
+        <p class="help-block" id="hotelName-required" ng-show="hotelForm.hotelName.$dirty && hotelForm.hotelName.$error.required">
+            A hotel name is required.
+        </p>
+        <p class="help-block" id="hotelName-format" ng-show="hotelForm.hotelName.$dirty && hotelForm.hotelName.$error.pattern">
+            Please provide a name without numbers or special characters.
+        </p>
+    </div>
+
+    <!-- Form group for Last Name input and associated error messages. -->
+    <!-- ng-class conditionally applies a class string (e.g 'has-error'), dependent upon a boolean expression. -->
+    <div class="form-group" ng-class="{'has-error': hotelForm.post_code.$invalid}">
+        <label for="post_code">Post Code:</label>
+        <!-- ng-pattern validates the contents of an input against a provided regexp. -->
+        <input type="text" name="post_code" class="form-control" id="post_code" placeholder="Enter a post code."
+               ng-model="hotel.post_code" ng-pattern="/^[A-Z][A-Z][0-9]\s?[0-9][A-Z][A-Z]$/" required>
+        <!-- Appropriate error messages, to be displayed as required. -->
+        <!-- ng-show conditionally applies the style {display: none !important} if statement is false. -->
+        <p class="help-block" id="post_code-required" ng-show="hotelForm.post_code.$dirty && hotelForm.post_code.$error.required">
+            A post code is required.
+        </p>
+        <p class="help-block" id="post_code-format" ng-show="hotelForm.post_code.$dirty && hotelForm.post_code.$error.pattern">
+            Please provide a number without special characters.
+        </p>
+    </div>
+
+    <!-- Form group for Phone Number input and associated error messages. -->
+    <!-- ng-class conditionally applies a class string (e.g 'has-error'), dependent upon a boolean expression. -->
+    <div class="form-group" ng-class="{'has-error': hotelForm.hotel_phone_number.$invalid}">
+        <label for="hotel_phone_number">Phone:</label>
+        <!-- ng-pattern validates the contents of an input against a provided regexp. -->
+        <input type="text" name="hotel_phonen_number" class="form-control" id="hotel_phone_number" placeholder="0NNNNNNNNNN"
+               ng-model="hotel.hotel_phone_number" ng-pattern="/^[0][0-9]{10}$/" required>
+        <!-- Appropriate error messages, to be displayed as required. -->
+        <!-- ng-show conditionally applies the style {display: none !important} if statement is false. -->
+        <p class="help-block" id="hotel_phone_number-required" ng-show="hotelForm.hotel_phone_number.$dirty && hotelForm.hotel_phone_number.$error.required">
+            A phone number is required.
+        </p>
+        <p class="help-block" id="hotel_phone_number-format" ng-show="hotelForm.hotel_phone_number.$dirty && hotelForm.hotel_phone_number.$error.pattern">
+            Please a provide a valid number in the format 0NNNNNNNNNN  starting with 0.
+        </p>
+    </div>
+
+    
+  
+
+    <!-- Load the appropriate form controls depending on whether the variable $scope.create is truthy -->
+    <div ng-if="create" ng-include="'templates/hotel/addControls.html'"></div>
+    <div ng-if="!create" ng-include="'templates/hotel/editControls.html'"></div>
+
+</form>

@@ -1,0 +1,9 @@
+org\jboss\as\quickstarts\contacts\test\page\ContactListPage.class
+org\jboss\as\quickstarts\contacts\test\page\ShellPage.class
+org\jboss\as\quickstarts\contacts\test\page\fragment\MessageFragment.class
+org\jboss\as\quickstarts\contacts\test\Deployments.class
+org\jboss\as\quickstarts\contacts\test\Contact.class
+org\jboss\as\quickstarts\contacts\test\page\fragment\ContactListItemPageFragment.class
+org\jboss\as\quickstarts\contacts\test\ContactsAngularjsTest.class
+org\jboss\as\quickstarts\contacts\test\page\ContactPage.class
+org\jboss\as\quickstarts\contacts\test\RESTTest.class
