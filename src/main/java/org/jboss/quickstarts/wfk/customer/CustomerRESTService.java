@@ -253,7 +253,8 @@ public class CustomerRESTService {
         try {
             Customer customer = service.findById(id);
             if (customer != null) {
-                service.delete(customer);
+                log.info("Deleting a customer is an unsupported operation");
+                //service.delete(customer);
             } else {
                 log.info("CustomerRESTService - deleteCustomer - No customer with matching ID was found so can't Delete.");
                 throw new WebApplicationException(Response.Status.NOT_FOUND);
@@ -261,7 +262,7 @@ public class CustomerRESTService {
 
             builder = Response.noContent();
             log.info("deleteCustomer completed. Customer = " + customer.getName()  + " " + customer.getEmail() + " " + customer.getPhoneNumber()  + " " + customer.getId());
-        } catch (Exception e) {
+       } catch (Exception e) {
             log.info("Exception - " + e.toString());
             // Handle generic exceptions
             Map<String, String> responseObj = new HashMap<String, String>();
@@ -270,7 +271,7 @@ public class CustomerRESTService {
         }
 
         return builder.build();
-    }
+   }
     
     /**
      * <p>Creates a JAX-RS "Bad Request" response including a map of all violation fields, and their message. This can be used

@@ -58,7 +58,7 @@ import org.junit.runner.RunWith;
  *
  * 
  * @author balunasj
- * @author Joshua Wilson
+ * @author Andrew Mathews, adapted from code by Joshua Wilson
  * @see CustomerRESTService
  */
 @RunWith(Arquillian.class)
@@ -120,116 +120,117 @@ public class BookingRegistrationTest {
     @Named("logger") Logger log;
 
     //Set millis 498484800000 from 1985-10-10T12:00:00.000Z
-   
-    private Date date = new Date(2015,12,12);
+   	private Date date = new Date(2016,01,02);
     
-    //Create customer and taxi objects to use in the tests
-    Customer customer = createCustomerInstance("Jack", "jack@mailinator.com", "02225551234");
-    Customer customer1= createCustomerInstance("Paul","P.C@maid.com","02589631475");
-    Customer customer2= createCustomerInstance("Naul","PUIC@magid.com","03698745219");
-    Taxi taxi = createTaxiInstance(7,  "p799sna");
-    Taxi taxi1= createTaxiInstance(3,"p799snb");
-    Taxi taxi2= createTaxiInstance(5,"p799snc");
+    //Create taxi and customer objects to be used in the tests
+    Taxi taxi =  createTaxiInstance(7,"p799sna");
+    Taxi taxi1 = createTaxiInstance(3,"p799snb");
+    Taxi taxi2 = createTaxiInstance(5,"p799snc");
+    Taxi taxi3 = createTaxiInstance(4,"p523snc");
+    Taxi taxi4 = createTaxiInstance(5,"p732snc");
+    Taxi taxi5 = createTaxiInstance(4,"p598snc");
     
+    Customer customer = createCustomerInstance("Bob", "bob@mailinator.com", "01225593234");
+    Customer customer1= createCustomerInstance("Will","will@mailinator.com","02534637492");
+    Customer customer2= createCustomerInstance("Dom","dom@mailinator.com","02358745849");
+    Customer customer3= createCustomerInstance("Andy","andy@mailinator.com","05398294839");
+    Customer customer4= createCustomerInstance("Steve","steve@mailinator.com","02847395849");
+    Customer customer5= createCustomerInstance("Don","donny@mailinator.com","05394758639");
     
-    
-    
+    //Test registering a booking
+    @SuppressWarnings("unchecked")
     @Test
     @InSequence(1)
     public void testRegister() throws Exception {
         
-    	 customerRESTService.createCustomer(customer);
-         taxiRESTService.createTaxi(taxi);
+    	customerRESTService.createCustomer(customer);
+        taxiRESTService.createTaxi(taxi);
         
+        Booking booking = createBookingInstance(customer.getId(),taxi.getId(),date);
+        Response response = bookingRESTService.createBooking(booking);
         
-        
-        Booking booking=createBookingInstance(customer.getId(),taxi.getId(),date);
-        Response response3 = bookingRESTService.createBooking(booking);
-        //CORRECT  
-        assertEquals("Unexpected response status", 201, response3.getStatus());
-        log.info(" New booking was persisted and returned status " + response3.getStatus());
+        assertEquals("Unexpected response status", 201, response.getStatus());
+        log.info(" New booking was persisted and returned status " + response.getStatus());
     }
 
+    
+    //Test registering an invalid booking where a customer and taxi ID that don't exist are used
     @SuppressWarnings("unchecked")
     @Test
     @InSequence(2)
     public void testInvalidRegister() throws Exception {
        
+        Booking booking=createBookingInstance((long)99999,(long)99999,date);
+        Response response = bookingRESTService.createBooking(booking);
         
-        //register an invalid registraton 
-        Booking booking=createBookingInstance((long)23423,(long)423420,date);
-        Response response2 = bookingRESTService.createBooking(booking);
-        
-  
-        //bad request
-        assertEquals("Unexpected response status", 400, response2.getStatus());
+        //Check that it's a bad request (error 400)
+        assertEquals("Unexpected response status", 400, response.getStatus());
        
-        assertEquals("Unexpected response.getEntity(). It contains " + response2.getEntity(), 1,
-            ((Map<String, String>) response2.getEntity()).size());
-        log.info("Invalid booking register attempt failed with return code " + response2.getStatus());
+        assertEquals("Unexpected response.getEntity(). It contains " + response.getEntity(), 1,
+            ((Map<String, String>) response.getEntity()).size());
+        log.info("Invalid booking register attempt failed with return code " + response.getStatus());
     }
 
+	// Tests that registering a duplicate booking isn't allowed
+	// i.e. registering two booking with same date and taxi combination
     @SuppressWarnings("unchecked")
     @Test
     @InSequence(3)
     public void testDuplicateBooking() throws Exception {
         
+    	// Create two customers and a taxi object
     	customerRESTService.createCustomer(customer2);
-    	customerRESTService.createCustomer(customer1);
+    	customerRESTService.createCustomer(customer3);
         taxiRESTService.createTaxi(taxi2);
-        //taxiRESTService.createTaxi(taxi1);
-        //Register a booking
-        Booking booking=createBookingInstance(customer1.getId(),taxi2.getId(),date);
-        Response booking_response1 = bookingRESTService.createBooking(booking);
         
-      
+        // Register a booking
+        Booking booking1 = createBookingInstance(customer2.getId(),taxi2.getId(),date);
+        Response response1 = bookingRESTService.createBooking(booking1);
         
-        // Register a different booking with same date and taxi
-        Booking anotherBooking = createBookingInstance(customer2.getId(),taxi2.getId(),date);
-        Response booking_response2 = bookingRESTService.createBooking(anotherBooking);
+      	// Register a second booking with same date and taxi
+        Booking booking2 = createBookingInstance(customer3.getId(),taxi2.getId(),date);
+        Response response2 = bookingRESTService.createBooking(booking2);
 
-        assertEquals("Unexpected response status",201,booking_response1.getStatus());
-    //    assertEquals("Unexpected response status",409, booking_response2.getStatus());
-        assertEquals("Unexpected response.getEntity(). It contains" + booking_response2.getEntity(), 1,
-            ((Map<String, String>) booking_response2.getEntity()).size());
-        log.info("Duplicate customer register attempt failed with return code " + booking_response2.getStatus());
+        assertEquals("Unexpected response status",201, response1.getStatus());
+    	assertEquals("Unexpected response status",400, response2.getStatus());
+        assertEquals("Unexpected response.getEntity(). It contains" + response2.getEntity(), 1,
+            ((Map<String, String>) response2.getEntity()).size());
+        log.info("Duplicate customer register attempt failed with return code " + response2.getStatus());
     }
     
     
+    @SuppressWarnings("unchecked")
     @Test
     @InSequence(4)
     public void testRetrieveAllBookings() throws Exception {
         
-        Booking booking = createBookingInstance((long)10001,(long)10001, date);
-        bookingRESTService.createBooking(booking);
+        Booking booking1 = createBookingInstance((long)10001,(long)10001, date);
+        bookingRESTService.createBooking(booking1);
         
-        Booking anotherBooking = createBookingInstance((long)10002,(long)10002, date);
-        bookingRESTService.createBooking(anotherBooking);
+        Booking booking2 = createBookingInstance((long)10002,(long)10002, date);
+        bookingRESTService.createBooking(booking2);
         
         Response response = bookingRESTService.retrieveAllBookings();
 
         assertEquals("Unexpected response status", 200, response.getStatus());
-        log.info(" List of all bookings was persisted and returned status " + response.getStatus());
+        log.info("List of all bookings was persisted and returned status " + response.getStatus());
     }
-    
-   // @Test
-   // @InSequence(5)
-   // public void testDeleteBooking() throws Exception {
+   
+   @SuppressWarnings("unchecked") 
+   @Test
+   @InSequence(5)
+   public void testDeleteBooking() throws Exception {
+   
+   		customerRESTService.createCustomer(customer4);
+        taxiRESTService.createTaxi(taxi3);
         
-   //     Customer customer12 = createCustomerInstance("Jim", "jimmy@mailinator.com", "02225586234");
-   //     Taxi taxi12 = createTaxiInstance(7,  "p799sna");
+        Booking booking3 = createBookingInstance(customer4.getId(),taxi3.getId(),date);
+        Response response = bookingRESTService.deleteBooking(booking3.getId()); 
         
-   //     customerRESTService.createCustomer(customer12);
-   //     taxiRESTService.createTaxi(taxi12);
+        assertEquals("Unexpected response status", 400, response.getStatus());
+        log.info(" Booking was deleted and returned status " + response.getStatus());   
         
-        
-        
-     //   Booking booking12 = createBookingInstance(customer12.getId(),taxi12.getId(),date);
-     //   Response response = bookingRESTService.deleteBooking(booking12.getId());
-
-     //   assertEquals("Unexpected response status", 204, response.getStatus());
-     //   log.info("Booking deleted and returned status " + response.getStatus());
-    //}
+    }
 
     /**
      * <p>A utility method to construct a {@link org.jboss.quickstarts.wfk.Booking.Booking Booking} object for use in
@@ -242,9 +243,9 @@ public class BookingRegistrationTest {
      */
     
     
-    Customer createCustomerInstance(String Name,String email, String phone) {
+    Customer createCustomerInstance(String name,String email, String phone) {
         Customer customer = new Customer();
-        customer.setName(Name);
+        customer.setName(name);
         customer.setEmail(email);
         customer.setPhoneNumber(phone);
         
@@ -260,18 +261,19 @@ public class BookingRegistrationTest {
     }
 
     
-    Booking createBookingInstance(Long customerID, Long taxiID, Date booking_date) {
+    Booking createBookingInstance(Long customerID, Long taxiID, Date bookingdate) {
         
     	
-    	Booking booking = new Booking();       
+    	Booking booking = new Booking(); 
+    	      
         //get the customer and taxi by Their ID
-    	Customer customer =customerService.findById(customerID);
+    	Customer customer = customerService.findById(customerID);
         Taxi taxi = taxiService.findById(taxiID);
         
         //initialize the booking 
         booking.setCustomer(customer);
         booking.setTaxi(taxi);
-        booking.setBookingDate(booking_date);
+        booking.setBookingDate(bookingdate);
         return booking;
     }
 }

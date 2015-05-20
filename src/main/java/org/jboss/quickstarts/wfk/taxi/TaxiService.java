@@ -175,7 +175,8 @@ public class TaxiService {
         Taxi deletedTaxi = null;
         
         if (taxi.getId() != null) {
-            deletedTaxi = crud.delete(taxi);
+            log.info("Unable to delete taxi as unsupported operation");
+            //deletedTaxi = crud.delete(taxi);
         } else {
             log.info("TaxiService.delete() - No ID was found so can't Delete.");
         }

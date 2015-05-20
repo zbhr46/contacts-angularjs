@@ -151,6 +151,21 @@ public class TaxiRegistrationTest {
         assertEquals("Unexpected response status", 200, response.getStatus());
         log.info(" List of all taxis was persisted and returned status " + response.getStatus());
     }
+    
+    //Delete taxi method has been disabled so it instead logs a message saying unsupported operation
+	//So the method should still work and should receive a 201 message, even though deleting is disabled
+	@SuppressWarnings("unchecked") 
+   	@Test
+   	@InSequence(5)
+   	public void testDeleteTaxi() throws Exception {
+   
+   		Taxi taxiToDelete = createTaxiInstance(7,"p798dnu");
+   		Response response = taxiRESTService.createTaxi(taxiToDelete);
+        
+        assertEquals("Unexpected response status", 201, response.getStatus());
+        log.info(" Taxi not deleted and returned status " + response.getStatus());   
+        
+    }
 
 
     /**

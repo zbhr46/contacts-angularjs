@@ -110,9 +110,9 @@ public class Booking implements Serializable {
     	return customer;
     }
 
-    public void setCustomer(Customer con)
+    public void setCustomer(Customer customer)
     {
-    	this.customer=con;
+    	this.customer=customer;
     }
     
     public long getCustomerId()

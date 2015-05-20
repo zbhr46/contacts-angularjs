@@ -232,7 +232,9 @@ public class TaxiRESTService {
     }
 
     /**
-     * <p>Deletes a taxi using the ID provided. If the ID is not present then nothing can be deleted.</p>
+     * 
+     *	UNSUPPORTED OPERATION
+	 *Deletes a taxi using the ID provided. If the ID is not present then nothing can be deleted.</p>
      *
      * <p>Will return a JAX-RS response with either 200 OK or with a map of fields, and related errors.</p>
      * 
@@ -248,7 +250,8 @@ public class TaxiRESTService {
         try {
             Taxi taxi = service.findById(id);
             if (taxi != null) {
-                service.delete(taxi);
+            	log.info("Unable to delete taxi as unsupported operation");
+                //service.delete(taxi);
             } else {
                 log.info("TaxiRESTService - deleteTaxi - No taxi with matching ID was found so can't Delete.");
                 throw new WebApplicationException(Response.Status.NOT_FOUND);

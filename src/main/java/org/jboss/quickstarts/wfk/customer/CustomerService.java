@@ -153,6 +153,7 @@ public class CustomerService {
     }
 
     /**
+     *	UNSUPPORTED OPERATION
      * <p>Deletes the provided Customer object from the application database if found there.<p/>
      * 
      * @param customer The Customer object to be removed from the application database
@@ -160,12 +161,16 @@ public class CustomerService {
      * @throws Exception
      */
     Customer delete(Customer customer) throws Exception {
-        log.info("CustomerService.delete() - Deleting " + customer.getName());
+        
+        
+        
+    	log.info("CustomerService.delete() - Deleting " + customer.getName());
         
         Customer deletedCustomer = null;
-        
+       
         if (customer.getId() != null) {
-            deletedCustomer = crud.delete(customer);
+            log.info("Deleting customers is an unsupported operation");
+            //deletedCustomer = crud.delete(customer);
         } else {
             log.info("CustomerService.delete() - No ID was found so can't Delete.");
         }

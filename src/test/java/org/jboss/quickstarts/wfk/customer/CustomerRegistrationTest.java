@@ -143,6 +143,8 @@ public class CustomerRegistrationTest {
         log.info("Duplicate customer register attempt failed with return code " + response.getStatus());
     }
     
+    
+    //Tests that the retrieve all customers method is working
     @Test
     @InSequence(4)
     public void testRetrieveAllCustomers() throws Exception {
@@ -157,6 +159,23 @@ public class CustomerRegistrationTest {
         assertEquals("Unexpected response status", 200, response.getStatus());
         log.info(" List of all customers was persisted and returned status " + response.getStatus());
     }
+
+	
+	//Delete customer method has been disabled so it instead logs a message saying unsupported operation
+	//So the method should still work and should receive a 201 message, even though deleting is disabled
+	@SuppressWarnings("unchecked") 
+   	@Test
+   	@InSequence(5)
+   	public void testDeleteCustomer() throws Exception {
+   
+   		Customer custToDelete = createCustomerInstance("Alex","alex@deleted.com","04545214575");
+   		Response response = customerRESTService.createCustomer(custToDelete);
+        
+        assertEquals("Unexpected response status", 201, response.getStatus());
+        log.info(" Customer not deleted and returned status " + response.getStatus());   
+        
+    }
+
 
     /**
      * <p>A utility method to construct a {@link org.jboss.quickstarts.wfk.Customer.Customer Customer} object for use in
